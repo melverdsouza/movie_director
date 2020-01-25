@@ -10,10 +10,7 @@ app.use(bodyparser.json());
 app.listen(3000)
 
 let connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'SJBhs@123',
-    database: 'movies'
+    
 })
 
 connection.connect(function(err) {
@@ -23,49 +20,7 @@ connection.connect(function(err) {
     console.log('server started on port 3000 ');
   });
 
-// sql query function
-// function passQuery(query) {
-//   connection.query(query, function(err, result) {
-//     if (err) throw err;
-//     let final = JSON.stringify(result);
-//     console.log(JSON.parse(final));
-//     return JSON.parse(final)
-//     // result.send(JSON.stringify(result));
-//   })
-// }
-
-
-// // to create a director table
-// connection.query('CREATE TABLE directors (id INT, Director VARCHAR(100))', function(error, results,fields) {
-//     console.log(error) // error will be an Error if one occurred during the query
-//     console.log(results) // results will contain the results of the query
-//     console.log(fields) // fields will contain information about the returned results fields (if any)
-// });
-
-
-// // to add unique directors to the directors table
-// // get unique directors list
-// let directorList = [];
-// for(let i = 0; i < moviesdata.length; i++) {
-//     directorList.push(moviesdata[i]['Director'])
-// }
-
-// let directorSet = new Set(directorList)
-// let uniqueDirector = [... directorSet]
-
-// console.log(uniqueDirector.length)
-
-// // make a director list
-// for(let i = 0; i < uniqueDirector.length; i++) {
-//   let id = i + 1;
-//   // console.log(uniqueDirector[i])
-//   connection.query("INSERT INTO directors (id, Director) VALUES ('" + id + "', '" + uniqueDirector[i] + "');", function(error, results,fields) {
-//     console.log(error) // error will be an Error if one occurred during the query
-//     console.log(results) // results will contain the results of the query
-//     console.log(fields) // fields will contain information about the returned results fields (if any)
-// })
-// }
-
+//   get all directors
 app.get('/api/directors',(req, res) => {
     let allDirectors = `SELECT * FROM directors;`
     connection.query(allDirectors, (err, result) => {
@@ -76,13 +31,53 @@ app.get('/api/directors',(req, res) => {
     })
 })
 
+// get director with given id
 app.get('/api/director/:id',(req, res) => {
-    let id = req.params.id
+    let id = req.params.id;
     let allDirectors = `SELECT * FROM directors WHERE id = ${id};`
     connection.query(allDirectors, (err, result) => {
         if(err) throw err;
         let final = JSON.stringify(result);
         res.send(JSON.parse(final))
+        console.log(JSON.parse(final));
+    })
+})
+
+// add new director
+app.get('/api/newdirector/:director', (req, res) => {
+    let newDirector = req.params.director;
+    let addNewDirector = `SELECT COUNT(*) INTO @id FROM directors; INSERT INTO directors (id, Director) VALUES (@id+1, 'final check');`
+    connection.query(addNewDirector, (err, result) => {
+        if(err) throw err;
+        let final = JSON.stringify(result);
+        res.send(JSON.parse(final));
+        console.log(JSON.parse(final));
+    })
+})
+
+// update a director with given id
+app.get('/api/updatedirector/:id/:director', (req, res) => {
+    let id = req.params.id;
+    let editDirector = req.params.director;
+    console.log(id)
+    console.log(editDirector)
+    let updateDirectorQuery = `UPDATE directors SET director = ${editDirector} WHERE id = ${id};`;
+    connection.query(updateDirectorQuery, (err, result) => {
+        if(err) throw err;
+        let final = JSON.stringify(result);
+        res.send(JSON.parse(final));
+        console.log(JSON.parse(final));
+    })
+})
+
+// delete the director with a given id
+app.get('/api/deldirector/:id', (req, res) => {
+    let delDirectorId = req.params.id;
+    let delDirectorQuery = `SET SQL_SAFE_UPDATES = 0; DELETE FROM directors WHERE id = ${delDirectorId};`
+    connection.query(delDirectorQuery, (err, result) => {
+        if(err) throw err;
+        let final = JSON.stringify(result);
+        res.send(JSON.parse(final));
         console.log(JSON.parse(final));
     })
 })
