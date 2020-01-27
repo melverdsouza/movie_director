@@ -10,7 +10,11 @@ app.use(bodyparser.json());
 app.listen(3000)
 
 let connection = mysql.createConnection({
-    
+    host: 'localhost',
+    user: 'root',
+    password: 'SJBhs@123',
+    database: 'movies',
+    multipleStatements: true
 })
 
 connection.connect(function(err) {
@@ -46,7 +50,7 @@ app.get('/api/director/:id',(req, res) => {
 // add new director
 app.get('/api/newdirector/:director', (req, res) => {
     let newDirector = req.params.director;
-    let addNewDirector = `SELECT COUNT(*) INTO @id FROM directors; INSERT INTO directors (id, Director) VALUES (@id+1, 'final check');`
+    let addNewDirector = `SELECT COUNT(*) INTO @id FROM directors; INSERT INTO directors (id, Director) VALUES (@id+1, '${newDirector}');`
     connection.query(addNewDirector, (err, result) => {
         if(err) throw err;
         let final = JSON.stringify(result);
@@ -61,7 +65,7 @@ app.get('/api/updatedirector/:id/:director', (req, res) => {
     let editDirector = req.params.director;
     console.log(id)
     console.log(editDirector)
-    let updateDirectorQuery = `UPDATE directors SET director = ${editDirector} WHERE id = ${id};`;
+    let updateDirectorQuery = `UPDATE directors SET director = '${editDirector}' WHERE id = ${id};`;
     connection.query(updateDirectorQuery, (err, result) => {
         if(err) throw err;
         let final = JSON.stringify(result);

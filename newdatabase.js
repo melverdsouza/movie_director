@@ -10,7 +10,10 @@ app.use(bodyparser.json());
 app.listen(3000)
 
 let connection = mysql.createConnection({
-    
+    host: 'localhost',
+    user: 'root',
+    password: 'SJBhs@123',
+    database: 'newmovielist'
 })
 
 connection.connect(function(err) {

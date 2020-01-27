@@ -76,11 +76,10 @@ app.get('/api/newmovie/:rank/:title/:description/:runtime/:genre/:rating/:metasc
   let newMetascore = req.params.metascore;
   let newVotes = req.params.votes;
   let newGross_Earning_in_Mil = req.params.gross_earning_in_mil;
-  // the directorid should be displayed in this table and a new record to be made in directors table if required
-  // let newDirectorId = req.params.directorid;
+  let newDirectorId = req.params.directorid;
   let newActor = req.params.actor;
   let newYear = req.params.year;
-  let addNewDirector = `SELECT COUNT(*) INTO @id FROM directors; INSERT INTO directors (id, Director) VALUES (@id+1, 'final check');`
+  let addNewDirector = `insert into movieslist (Rank, Title, Description, Runtime, Genre, Rating, Metascore, Votes, Gross_Earning_in_Mil, DirectorId, Actor, Year) VALUES (${newRank}, "${newTitle}", "${newDescription}", ${newRuntime}, '${newGenre}', ${newRating}, "${newMetascore}", ${newVotes}, "${newGross_Earning_in_Mil}", ${newDirectorId}, "${newActor}", '${newYear}');`
   connection.query(addNewDirector, (err, result) => {
       if(err) throw err;
       let final = JSON.stringify(result);
